@@ -1,4 +1,5 @@
 import sys
+import Queue
 '''
 start_city = sys.argv[1] 
 end_city = sys.argv[2] 
@@ -10,13 +11,13 @@ f2 = open('road-segments.txt','r')
 f3 = open('seg_dict.txt','w')
 f4 = open('city_dict.txt','w')
 cities = []
-t = []
+#t = []
 for city in f1:
-	t.append(city.split()[0])
+	#t.append(city.split()[0])
 	cities.append(city.split())
 	
-print t	
-print len(cities)
+#print t	
+#print len(cities)
 seg = []
 for segments in f2:
 	seg.append(segments.split())
@@ -44,7 +45,7 @@ for segments in seg:
 
 print len(seg_dict)
 for city in cities:
-		city_dict.update({str(city[0]) : [float(city[1]),float(city[2])]})
+		city_dict.update({str(city[0]) : (float(city[1]),float(city[2]))})
 print len(city_dict)		
 for i,j in city_dict.items():
 	f4.write(i+str(j)+"\n")
@@ -52,9 +53,46 @@ for i,j in city_dict.items():
 for i,j in seg_dict.items():
 	f3.write(i+str(j)+"\n")
 
-def dfs(graph, option):
 
-	pass
+def dfs(graph,start,goal):
+	q = Queue.PriorityQueue()
+	q.put((-1,start))
+	visited = []
+	path = []
+	j = -1
+	while True:
+		next = q.get()	
+		print next[1]
+		if next[1] == goal:
+			return path
+		else:			
+			for i in graph[next[1]]:
+				if i[0] not in set(visited):
+					q.put((j-1,i[0]))
+					visited.append(i[0])
+			#print visited
+		if q.empty():
+			break
+	if goal not in path:
+		print 'Not found'
+		return None		
+'''
+def dfs(graph, start, goal, path=None):
+	print path
+	if path is None:
+		path = [start]
+	if start == goal:
+		return path
+	for next in graph[start]:
+		print "Next:"+next[0]
+		if next not in path:
+			dfs(graph, next[0], goal, path.append(next[0]))
+'''
+path = dfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
+#dfs(seg_dict,'Eastman,_Georgia','Eastman,_Georgia')
+print path
+
+
 f1.close()
 f2.close()
 f3.close()
