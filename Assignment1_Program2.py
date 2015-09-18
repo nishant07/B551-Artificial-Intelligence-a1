@@ -62,14 +62,18 @@ def dfs(graph,start,goal):
 	j = -1
 	while True:
 		next = q.get()	
+		print next
 		print next[1]
 		if next[1] == goal:
 			return path
 		else:			
 			for i in graph[next[1]]:
+				k=0
 				if i[0] not in set(visited):
-					q.put((j-1,i[0]))
+					q.put((j+k,i[0]))
 					visited.append(i[0])
+					k-=1
+		j -= 1
 			#print visited
 		if q.empty():
 			break
@@ -88,9 +92,37 @@ def dfs(graph, start, goal, path=None):
 		if next not in path:
 			dfs(graph, next[0], goal, path.append(next[0]))
 '''
-path = dfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
+def bfs(graph,start,goal):
+	q = Queue.PriorityQueue()
+	q.put((-1,start))
+	visited = []
+	path = []
+	j = 0
+	while True:
+		next = q.get()	
+		print next
+		if next[1] == goal:
+			return path
+		else:			
+			for i in graph[next[1]]:
+				if i[0] not in set(visited):
+					q.put((j,i[0]))
+					visited.append(i[0])
+		j+=1
+			#print visited
+		if q.empty():
+			break
+	if goal not in path:
+		print 'Not found'
+		return None		
+
+print 'DFS'
+path_dfs = dfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
+print 'BFS'
+path_bfs = bfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
+
 #dfs(seg_dict,'Eastman,_Georgia','Eastman,_Georgia')
-print path
+#print path
 
 
 f1.close()
