@@ -1,5 +1,6 @@
 
 """
+Problem Statement:
  The customer who ordered the Candelabrum received the
 Banister, while the customer who ordered the Banister received the package that Irene had ordered.
 Frank  received  a  Doorknob.   George's  package  went  to  Kirkwood  Street.   The  delivery  that  should
@@ -8,7 +9,14 @@ to Orange Drive.  Jerry received Heather's order.  The Elephant arrived in North
 who had ordered it received the package that should have gone to Maxwell Street.  The customer on
 Maxwell Street received the Amplifier. 
 """
-
+"""
+Solution:
+We took a dictonary with keys are arrival/received location of the item and their values are list of who ordered that item and where actually it should have received.
+We initialized these list with all posssible values.
+We kept removing the items from these list as per the information given.
+After removing as far as posssible, we left with 6 other fact. We checked  which remaining possibilities hold for these 6 condition/facts.
+And we arivided at only 1 solution.
+"""
 rec_loc = {'K':[['a','b','c','d','e'],['f','g','h','i','j'],['l','m','n','o']],
 'L':[['a','b','c','d','e'],['f','g','h','i','j'],['k','m','n','o']],
 'M':[['a','b','c','d','e'],['f','g','h','i','j'],['k','l','n','o']],

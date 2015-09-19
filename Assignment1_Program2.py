@@ -52,8 +52,8 @@ for i,j in city_dict.items():
 #print city_dict
 for i,j in seg_dict.items():
 	f3.write(i+str(j)+"\n")
-
-print seg_dict['McRae,_Georgia']
+total_dist = 0
+total_time = 0
 def dfs(graph,start,goal):
 	q = Queue.PriorityQueue()
 	q.put((-1,start))
@@ -66,13 +66,21 @@ def dfs(graph,start,goal):
 		print next[1]
 		if next[1] == goal:
 			return path
-		else:			
-			for i in graph[next[1]]:
+		else:
+			tmp = []
+			for xx in graph[next[1]]:				
+				if xx[0] not in set(visited):
+					tmp.append(xx[0])
+			tmp.sort(key = lambda x:x[1])
+			print "tmp"
+			print tmp	
+			for i in tmp:
 				k=0
-				if i[0] not in set(visited):
-					q.put((j+k,i[0]))
-					visited.append(i[0])
-					k-=1
+				q.put((j+k,i[0]))
+				#parent_dict[i[0]] = next[1]
+				visited.append(i[0])					#q.put((j+k,i[0]))
+					#visited.append(i[0])
+				k-=1
 		j -= 1
 			#print visited
 		if q.empty():
@@ -92,16 +100,30 @@ def dfs(graph, start, goal, path=None):
 		if next not in path:
 			dfs(graph, next[0], goal, path.append(next[0]))
 '''
+def find_parent(parent_dict,child,parent_target,path=None):
+	print "in find"
+	if path == None:
+		path = [child]
+	for i in parent_dict.items():
+		if i[1] == parent_target:
+			print 'yes'
+			return path
+		if i[1] != parent_target:
+			print i[1]
+			find_parent(parent_dict,i[1],parent_target,path.append(i[1]))
 def bfs(graph,start,goal):
 	q = Queue.PriorityQueue()
 	q.put((-1,start))
 	visited = []
 	path = []
+	parent_dict = {}
 	j = 0
-	while True:
+	while not q.empty():
 		next = q.get()	
 		print next
 		if next[1] == goal:
+			print parent_dict
+			path = find_parent(parent_dict,goal,start)
 			return path
 		else:
 			k=j
@@ -109,29 +131,34 @@ def bfs(graph,start,goal):
 			for i in graph[next[1]]:
 				print i
 				if i[0] not in set(visited):
-					tmp.append(i)
-			print tmp				
-			tmp.sort(key = lambda x:x[1])
-			print tmp			
+					tmp.append(i)				
+			tmp.sort(key = lambda x:x[1])			
 			for i in tmp:
 				q.put((k,i[0]))
+				parent_dict[i[0]] = next[1]
 				visited.append(i[0])
 		j+=1
 			#print visited
-		if q.empty():
-			break
+	
 	if goal not in path:
 		print 'Not found'
 		return None		
 
-print 'DFS'
+'''
+if routing_algo == 'bfs':
+	path_bfs = bfs(seg_dict,start_city,end_city)
+elif routing_algo == 'dfs'
+	path_dfs = dfs(seg_dict,start_city,end_city)	
+'''
+#print 'DFS'
 #path_dfs = dfs(seg_dict,'Bloomington,_Indiana','Indianapolis,_Indiana')
-print 'BFS'
+path_dfs = dfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
+#print 'BFS'
 #path_dfs = bfs(seg_dict,'Bloomington,_Indiana','Indianapolis,_Indiana')
 path_bfs = bfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
 
 #dfs(seg_dict,'Eastman,_Georgia','Eastman,_Georgia')
-#print path
+print path_bfs
 
 
 f1.close()
