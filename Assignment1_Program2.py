@@ -53,7 +53,7 @@ for i,j in city_dict.items():
 for i,j in seg_dict.items():
 	f3.write(i+str(j)+"\n")
 
-
+print seg_dict['McRae,_Georgia']
 def dfs(graph,start,goal):
 	q = Queue.PriorityQueue()
 	q.put((-1,start))
@@ -103,11 +103,19 @@ def bfs(graph,start,goal):
 		print next
 		if next[1] == goal:
 			return path
-		else:			
+		else:
+			k=j
+			tmp = []
 			for i in graph[next[1]]:
+				print i
 				if i[0] not in set(visited):
-					q.put((j,i[0]))
-					visited.append(i[0])
+					tmp.append(i)
+			print tmp				
+			tmp.sort(key = lambda x:x[1])
+			print tmp			
+			for i in tmp:
+				q.put((k,i[0]))
+				visited.append(i[0])
 		j+=1
 			#print visited
 		if q.empty():
@@ -117,8 +125,9 @@ def bfs(graph,start,goal):
 		return None		
 
 print 'DFS'
-path_dfs = dfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
+#path_dfs = dfs(seg_dict,'Bloomington,_Indiana','Indianapolis,_Indiana')
 print 'BFS'
+#path_dfs = bfs(seg_dict,'Bloomington,_Indiana','Indianapolis,_Indiana')
 path_bfs = bfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
 
 #dfs(seg_dict,'Eastman,_Georgia','Eastman,_Georgia')
