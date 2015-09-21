@@ -1,3 +1,17 @@
+
+'''
+Problem statement: To find routes between two cities.
+Solution:
+We created two dictionaries with a city as a key in both and keys would be latitude and longitude tuple in one dictionary 
+and city which is at other end of a road segment connencting this city and city in a key, their distance, speed limit, highway name in another dictionary.
+We used priority queue to create frontier to have next nodes to expand. 
+We gave priority based on distance in general and based on child parent relationship based on the algorithm chosen.
+ Which search algorithm seems to work best for which routing options? 
+In terms of shortest distance, A* works best followed by BFS then DFS. In terms of number of segments  and time, A* and BFS works well
+ Which algorithm is fastest in terms of the amount of computation time required by your program, and by how much, according to your experiments?
+ BFS required least amount of computation as it needs to save only child nodes in frontier while DFS requires a big number of nodes to be stored.
+ A* required calucation of heuristic function well apart from normal weight to the node.
+'''
 import sys
 import Queue
 
@@ -22,7 +36,7 @@ seg_dict = {}
 #Creating dictionary to store cities and their data which can be reached from a city. 
 for segments in seg:
 	if len(segments) != 5:
-		segments = [segments[0],segments[1],int(segments[2]),9999,segments[3]]
+		segments = [segments[0],segments[1],int(segments[2]),60,segments[3]]
 	else:
 		segments = [segments[0],segments[1],int(segments[2]),int(segments[3]),segments[4]]
 	if segments[0] not in seg_dict:
@@ -46,6 +60,7 @@ def find_parent(parent_dict,child,parent_target,path):
 	else:
 		path.append(parent_dict[child])
 		return find_parent(parent_dict,parent_dict[child],parent_target,path)
+
 #DFS Logic
 def dfs(graph,start,goal):
 	q = Queue.PriorityQueue()
@@ -57,7 +72,6 @@ def dfs(graph,start,goal):
 	while True:
 		next = q.get()
 		if next[1] == goal:
-	#		print parent_dict
 			path = find_parent(parent_dict,goal,start,[goal])
 			return path
 		else:
@@ -66,6 +80,7 @@ def dfs(graph,start,goal):
 				if i[0] not in set(visited):
 					tmp.append(i)
 			tmp.sort(key = lambda x:x[1])
+			#Give first priority to nearest city to go for
 			for i in tmp:
 				k=0
 				q.put((j+k,i[0]))
@@ -78,6 +93,7 @@ def dfs(graph,start,goal):
 	if goal not in path:
 		print 'Not found'
 		return None
+
 #BFS Logic
 def bfs(graph,start,goal):
 	q = Queue.PriorityQueue()
@@ -90,14 +106,12 @@ def bfs(graph,start,goal):
 		next = q.get()
 		#print next
 		if next[1] == goal:
-	#		print parent_dict
 			path = find_parent(parent_dict,goal,start,[goal])
 			return path
 		else:
 			k=j
 			tmp = []
 			for i in graph[next[1]]:
-		#		print i
 				if i[0] not in set(visited):
 					tmp.append(i)
 			tmp.sort(key = lambda x:x[1])
@@ -107,8 +121,6 @@ def bfs(graph,start,goal):
 				parent_dict[i[0]] = next[1]
 				visited.append(i[0])
 		j+=1
-	#print visited
-
 	if goal not in path:
 		print 'Not found'
 		return None
@@ -116,66 +128,50 @@ def bfs(graph,start,goal):
 total_time = 0
 total_dist = 0
 if routing_algo == 'bfs':
-#	print 'BFS'
+	print 'BFS Path'
 	path_bfs = bfs(seg_dict,start_city,end_city)
 	path_bfs.reverse()
 	print ' '.join(path_bfs)
-	
+	print 'Directions'
 	c = 0
 	try:
 		for i in path_bfs:
-			print i
 			for j in seg_dict[i]:
 				if j[0] == path_bfs[c+1]:
-					print str(c+1)+' Take '+str(j[3])+" from "+i+" to "+j[0]+" for distance "+str(j[1])+" at max speed "+str(j[2])
-					total_dist += int(j[1])
+					print str(c+1)+') Take '+str(j[3])+" from "+i+" to "+j[0]+" for distance "+str(j[1])+" at max speed "+str(j[2])
+					total_dist += j[1]
 					total_time += float(j[1])/j[2]
 					break
 			c+=1
 	except Exception:
 		pass
 		
-	print "Total"
-	print str(total_dist)+" "+str(total_time)+" ".join(path_bfs)
-	'''
-	for i in path_bfs:
-		for j in seg_dict[i]:
-			print j
-	'''
+	print "Itinery"
+	print str(total_dist)+" "+str(total_time)+" "+" ".join(path_bfs)
+
 elif routing_algo == 'dfs':
-#	print 'DFS'
+	print 'DFS Path'
 	path_dfs = dfs(seg_dict,start_city,end_city)
 	path_dfs.reverse()
 	print ' '.join(path_dfs)
+	print 'Directions'
 	c = 0
 	try:
 		for i in path_dfs:
 			for j in seg_dict[i]:
 				if j[0] == path_dfs[c+1]:
-					print str(c+1)+' Take '+str(j[3])+" from "+i+" to "+j[0]+" for distance "+str(j[1])+" at max speed "+str(j[2])
-					total_dist += int(j[1])
+					print str(c+1)+') Take '+str(j[3])+" from "+i+" to "+j[0]+" for distance "+str(j[1])+" at max speed "+str(j[2])
+					total_dist += j[1]
 					total_time += float(j[1])/j[2]
+					break
 			c+=1
 	except Exception:
 		pass
 		
-	print "Total"
-	print str(total_dist)+" "+str(total_time)+" ".join(path_dfs)
+	print "Itinery"
+	print str(total_dist)+" "+str(total_time)+" "+" ".join(path_dfs)
 else:
 	print 'No path found'
-
-#path_dfs = dfs(seg_dict,'Bloomington,_Indiana','Indianapolis,_Indiana')
-#path_dfs.reverse()
-#print path_dfs
-#path_dfs = dfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
-#print 'BFS'
-#path_bfs = bfs(seg_dict,'Bloomington,_Indiana','Indianapolis,_Indiana')
-#path_bfs = bfs(seg_dict,'Eastman,_Georgia','Dublin,_Georgia')
-
-#dfs(seg_dict,'Eastman,_Georgia','Eastman,_Georgia')
-#path_bfs.reverse()
-#print path_bfs
-
 
 f1.close()
 f2.close()
